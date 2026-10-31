@@ -1,5 +1,3 @@
-'use client'
-
 import { SectionHeading } from '@/components/sections/section-heading'
 
 interface PageHeroProps {
@@ -8,17 +6,17 @@ interface PageHeroProps {
   children?: React.ReactNode
 }
 
-/** Apertura común de las páginas internas. */
+/** Apertura común de las páginas internas: siempre oscura, debajo del navbar. */
 export function PageHero({ label, lines, children }: PageHeroProps) {
   return (
-    <section className="grain relative overflow-hidden bg-[#080808] pt-32 pb-12 lg:pt-44 lg:pb-16">
-      <div aria-hidden="true" className="tech-grid absolute inset-0" />
+    <section className="relative overflow-hidden bg-[#080A0E] pt-32 pb-12 lg:pt-44 lg:pb-20">
+      <div aria-hidden="true" className="blueprint absolute inset-0 [mask-image:linear-gradient(180deg,#000,transparent)]" />
       <div
         aria-hidden="true"
-        className="absolute top-0 right-0 h-full w-2/3 bg-[radial-gradient(50%_60%_at_85%_20%,rgb(255_212_0/0.06),transparent)]"
+        className="absolute top-0 right-0 h-full w-2/3 bg-[radial-gradient(55%_65%_at_80%_15%,rgb(23_105_232/0.38),transparent)]"
       />
       <div className="shell relative">
-        <SectionHeading as="h1" size="xl" label={label} lines={lines}>
+        <SectionHeading as="h1" size="xl" tone="dark" label={label} lines={lines}>
           {children}
         </SectionHeading>
       </div>

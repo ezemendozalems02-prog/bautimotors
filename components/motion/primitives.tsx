@@ -71,7 +71,7 @@ export function MaskedLines({
   return (
     <span ref={ref} className={cn('block', className)}>
       {lines.map((line, index) => (
-        <span key={index} className="block overflow-hidden pb-[0.06em]">
+        <span key={index} className="-mt-[0.18em] block overflow-hidden pt-[0.18em] pb-[0.06em]">
           <motion.span
             className="block"
             initial={{ y: '108%' }}
@@ -134,8 +134,28 @@ export function CountUp({ value, pad = 0, className }: { value: number; pad?: nu
   )
 }
 
+/** Cifra que transiciona entre valores: la usa la calculadora. */
+export function AnimatedNumber({ value, format, className }: { value: number; format: (value: number) => string; className?: string }) {
+  const reduced = useReducedMotion()
+  const [shown, setShown] = useState(value)
+  const previous = useRef(value)
+
+  useEffect(() => {
+    if (reduced) {
+      setShown(value)
+      previous.current = value
+      return
+    }
+    const controls = animate(previous.current, value, { duration: 0.5, ease, onUpdate: setShown })
+    previous.current = value
+    return () => controls.stop()
+  }, [reduced, value])
+
+  return <span className={className}>{format(shown)}</span>
+}
+
 /* Estado de la intro: las animaciones del hero esperan a que termine el preloader. */
-const INTRO_EVENT = 'bm:intro-done'
+const INTRO_EVENT = 'tm:intro-done'
 
 function subscribeIntro(callback: () => void) {
   window.addEventListener(INTRO_EVENT, callback)
@@ -152,7 +172,7 @@ export function useIntroDone() {
 
 export function finishIntro() {
   try {
-    sessionStorage.setItem('bm-intro', '1')
+    sessionStorage.setItem('tm-intro', '1')
   } catch {
     // Sin sessionStorage la intro se repite, pero el sitio funciona igual.
   }

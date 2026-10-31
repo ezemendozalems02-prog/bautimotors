@@ -1,42 +1,50 @@
 'use client'
 
-import { useState } from 'react'
-import { useMotionValueEvent, useScroll } from 'framer-motion'
+import { useEffect, useState } from 'react'
+import { usePathname } from 'next/navigation'
 import { MessageCircle } from 'lucide-react'
-import { defaultWhatsappMessage, whatsappUrl } from '@/lib/site'
+import { getMotoBySlug, motoPath } from '@/lib/motos'
+import { messages, whatsappUrl } from '@/lib/whatsapp'
 import { cn } from '@/lib/utils'
 
-interface WhatsAppButtonProps {
-  message?: string
-  className?: string
-  /** Oculta el botón hasta salir del hero, que ya tiene su propio acceso a WhatsApp. */
-  hideAtTop?: boolean
+/** Elige el mensaje según lo que la persona está mirando. */
+function contextMessage(pathname: string) {
+  const slug = pathname.match(/^\/motos\/([^/]+)$/)?.[1]
+  const moto = slug ? getMotoBySlug(slug) : undefined
+  if (moto) return messages.product(moto.name, motoPath(moto))
+  if (pathname.startsWith('/financiacion') || pathname.startsWith('/preguntas-frecuentes')) return messages.financing()
+  return messages.general()
 }
 
-export function WhatsAppButton({ message = defaultWhatsappMessage, className, hideAtTop = false }: WhatsAppButtonProps) {
-  const [pastHero, setPastHero] = useState(false)
-  const { scrollY } = useScroll()
+/** Botón flotante global. En la ficha móvil sube para no tapar la barra de compra. */
+export function WhatsAppButton() {
+  const pathname = usePathname()
+  const [visible, setVisible] = useState(false)
+  const onMotoPage = /^\/motos\/[^/]+$/.test(pathname)
 
-  useMotionValueEvent(scrollY, 'change', (current) => setPastHero(current > window.innerHeight * 0.7))
-
-  const hidden = hideAtTop && !pastHero
+  useEffect(() => {
+    const onScroll = () => setVisible(window.scrollY > 320)
+    onScroll()
+    window.addEventListener('scroll', onScroll, { passive: true })
+    return () => window.removeEventListener('scroll', onScroll)
+  }, [])
 
   return (
     <a
-      href={whatsappUrl(message)}
+      href={whatsappUrl(contextMessage(pathname))}
       target="_blank"
       rel="noopener noreferrer"
-      aria-label="Contactar por WhatsApp"
-      aria-hidden={hidden || undefined}
-      tabIndex={hidden ? -1 : undefined}
+      aria-label="Consultar por WhatsApp"
+      aria-hidden={!visible || undefined}
+      tabIndex={visible ? undefined : -1}
       className={cn(
-        'group fixed right-4 bottom-[calc(1rem+env(safe-area-inset-bottom))] z-30 flex h-14 items-center overflow-hidden rounded-full border border-primary/50 bg-[#111111] text-primary shadow-[0_8px_30px_rgb(0_0_0/0.5)] transition-[color,background-color,border-color,opacity,translate] duration-300 hover:border-primary hover:bg-primary hover:text-[#080808] md:right-6 md:bottom-6',
-        hidden && 'pointer-events-none translate-y-4 opacity-0',
-        className,
+        'wa-pulse group fixed right-4 z-30 flex h-14 items-center rounded-full bg-[#1769E8] text-white shadow-[0_12px_32px_-8px_rgb(23_105_232/0.8)] transition-[opacity,translate,background-color] duration-500 hover:bg-[#0B43A8] md:right-6 md:bottom-6',
+        onMotoPage ? 'bottom-[calc(5.25rem+env(safe-area-inset-bottom))]' : 'bottom-[calc(1rem+env(safe-area-inset-bottom))]',
+        !visible && 'pointer-events-none translate-y-4 opacity-0',
       )}
     >
       <span className="eyebrow max-w-0 overflow-hidden whitespace-nowrap transition-[max-width,padding] duration-500 ease-[cubic-bezier(.22,1,.36,1)] group-hover:max-w-44 group-hover:pl-5">
-        Chateá con nosotros
+        Consultanos
       </span>
       <span className="flex h-14 w-14 shrink-0 items-center justify-center">
         <MessageCircle className="h-6 w-6 transition-transform duration-500 group-hover:-rotate-12" />

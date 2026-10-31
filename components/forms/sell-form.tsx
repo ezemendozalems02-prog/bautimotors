@@ -1,85 +1,79 @@
 'use client'
 
 import { useState } from 'react'
-import { ArrowRight, CheckCircle, MessageCircle } from 'lucide-react'
-import { whatsappUrl } from '@/lib/site'
+import Link from 'next/link'
+import { MessageCircle } from 'lucide-react'
+import { isValidPhone } from '@/components/finance/purchase-flow'
+import { messages, whatsappUrl } from '@/lib/whatsapp'
 
-const fields = [
-  { name: 'name', label: 'Nombre completo', placeholder: 'Tu nombre', full: true },
-  { name: 'phone', label: 'Teléfono', placeholder: '+54 9 11 0000-0000', type: 'tel', full: true },
-  { name: 'brand', label: 'Marca', placeholder: 'Ej: BMW' },
-  { name: 'model', label: 'Modelo', placeholder: 'Ej: X3' },
-  { name: 'year', label: 'Año', placeholder: 'Ej: 2022', type: 'number' },
-  { name: 'km', label: 'Kilometraje', placeholder: 'Ej: 50000', type: 'number' },
-]
-
+/** Arma la consulta y la abre en WhatsApp. No hay envío ni guardado en el sitio. */
 export function SellForm() {
-  const [isSubmitting, setIsSubmitting] = useState(false)
-  const [isSubmitted, setIsSubmitted] = useState(false)
+  const [values, setValues] = useState({ name: '', phone: '', moto: '', year: '', km: '', comment: '' })
+  const [consent, setConsent] = useState(false)
+  const [showErrors, setShowErrors] = useState(false)
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault()
-    setIsSubmitting(true)
+  const currentYear = new Date().getFullYear()
+  const yearNumber = Number(values.year)
+  const errors = {
+    name: values.name.trim().length < 2 ? 'Ingresá tu nombre.' : null,
+    phone: !isValidPhone(values.phone) ? 'Ingresá un teléfono válido, con característica.' : null,
+    moto: values.moto.trim().length < 2 ? 'Indicá marca y modelo.' : null,
+    year: !Number.isInteger(yearNumber) || yearNumber < 1950 || yearNumber > currentYear ? 'Ingresá un año válido.' : null,
+    consent: !consent ? 'Necesitamos tu autorización para continuar.' : null,
+  }
+  const valid = Object.values(errors).every((error) => error === null)
 
-    // Simulate form submission
-    await new Promise((resolve) => setTimeout(resolve, 1500))
+  const update = (key: keyof typeof values) => (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => setValues({ ...values, [key]: event.target.value })
 
-    setIsSubmitting(false)
-    setIsSubmitted(true)
+  const handleSubmit = (event: React.FormEvent) => {
+    event.preventDefault()
+    if (!valid) {
+      setShowErrors(true)
+      return
+    }
+    window.open(whatsappUrl(messages.sellMoto(values)), '_blank', 'noopener,noreferrer')
   }
 
-  if (isSubmitted) {
-    return (
-      <div className="py-12 text-center">
-        <CheckCircle className="mx-auto h-10 w-10 text-primary" />
-        <h3 className="display display-md mt-5 text-white">Formulario enviado</h3>
-        <p className="mt-3 text-[#B8B8B8]">
-          Recibimos tu solicitud. Te contactaremos a la brevedad para coordinar la tasación de tu vehículo.
-        </p>
-        <a
-          href={whatsappUrl('Hola, acabo de completar el formulario para vender mi auto.')}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="btn btn-primary mt-7"
-        >
-          <MessageCircle />
-          Contactar por WhatsApp
-        </a>
-      </div>
-    )
-  }
+  const fields = [
+    { key: 'name', label: 'Nombre', autoComplete: 'name' },
+    { key: 'phone', label: 'Teléfono', type: 'tel', autoComplete: 'tel' },
+    { key: 'moto', label: 'Marca y modelo' },
+    { key: 'year', label: 'Año', type: 'number' },
+    { key: 'km', label: 'Kilometraje (opcional)', type: 'number' },
+  ] as const
 
   return (
-    <form onSubmit={handleSubmit}>
-      <h3 className="display display-md text-white">Datos de tu vehículo</h3>
-      <p className="mt-2 text-sm text-[#B8B8B8]">Completá el formulario y te contactamos con una propuesta.</p>
-
-      <div className="mt-7 grid grid-cols-2 gap-x-6 gap-y-6">
-        {fields.map((field) => (
-          <div key={field.name} className={field.full ? 'field col-span-2' : 'field'}>
-            <label htmlFor={field.name}>{field.label}</label>
-            <input id={field.name} name={field.name} type={field.type ?? 'text'} placeholder={field.placeholder} required />
+    <form onSubmit={handleSubmit} noValidate className="grid gap-5 sm:grid-cols-2">
+      {fields.map((field) => {
+        const error = field.key in errors ? errors[field.key as keyof typeof errors] : null
+        return (
+          <div key={field.key} className="field">
+            <label htmlFor={`sell-${field.key}`}>{field.label}</label>
+            <input id={`sell-${field.key}`} type={'type' in field ? field.type : 'text'} autoComplete={'autoComplete' in field ? field.autoComplete : undefined} value={values[field.key]} onChange={update(field.key)} aria-invalid={(showErrors && !!error) || undefined} />
+            {showErrors && error && <p className="field-error">{error}</p>}
           </div>
-        ))}
-        <div className="field col-span-2">
-          <label htmlFor="observations">Observaciones (opcional)</label>
-          <textarea
-            id="observations"
-            name="observations"
-            rows={3}
-            placeholder="Contanos más sobre tu vehículo: versión, color, estado, extras..."
-          />
-        </div>
+        )
+      })}
+      <div className="field sm:col-span-2">
+        <label htmlFor="sell-comment">Comentario (opcional)</label>
+        <textarea id="sell-comment" rows={3} maxLength={500} value={values.comment} onChange={update('comment')} />
       </div>
-
-      <button type="submit" disabled={isSubmitting} className="btn btn-primary mt-8 w-full">
-        {isSubmitting ? 'Enviando...' : 'Enviar solicitud'}
-        <ArrowRight />
+      <div className="sm:col-span-2">
+        <label className="flex cursor-pointer items-start gap-3 text-sm text-[#20242B]">
+          <input type="checkbox" checked={consent} onChange={(event) => setConsent(event.target.checked)} className="mt-0.5 h-5 w-5 shrink-0 accent-[#1769E8]" />
+          <span>
+            Autorizo a Tu Moto Ya a usar estos datos para responder mi consulta.{' '}
+            <Link href="/privacidad" className="font-semibold text-primary underline underline-offset-2">
+              Ver privacidad
+            </Link>
+          </span>
+        </label>
+        {showErrors && errors.consent && <p className="field-error">{errors.consent}</p>}
+      </div>
+      <button type="submit" className="btn btn-primary sm:col-span-2">
+        <MessageCircle />
+        Consultar por WhatsApp
       </button>
-
-      <p className="mt-4 text-center text-xs text-[#8d8d8d]">
-        Al enviar este formulario, aceptás que nos contactemos con vos para evaluar tu vehículo.
-      </p>
     </form>
   )
 }

@@ -1,266 +1,229 @@
 'use client'
 
 import { useMemo, useState } from 'react'
+import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
 import { AnimatePresence, motion } from 'framer-motion'
 import { ChevronDown, Search, SlidersHorizontal, X } from 'lucide-react'
 import { Drawer, DrawerClose, DrawerContent, DrawerTitle, DrawerTrigger } from '@/components/ui/drawer'
-import { VehicleCard } from '@/components/vehicle-card'
+import { MotoCard } from '@/components/moto/moto-card'
 import { ease } from '@/components/motion/primitives'
-import { getAllBrands, getAllTypes, getVehicleStatus, vehicles, type Vehicle } from '@/lib/vehicles'
+import { activeCategories, categories, motos, type Moto, type MotoCategory } from '@/lib/motos'
 import { cn } from '@/lib/utils'
 
-const yearRanges = [
-  { label: 'Todos', min: 0, max: 9999 },
-  { label: '2023+', min: 2023, max: 9999 },
-  { label: '2020-2022', min: 2020, max: 2022 },
-  { label: '2017-2019', min: 2017, max: 2019 },
-  { label: 'Antes de 2017', min: 0, max: 2016 },
+const ccBands = [
+  { label: 'Hasta 124 cc', min: 0, max: 124 },
+  { label: '125 a 199 cc', min: 125, max: 199 },
+  { label: '200 a 250 cc', min: 200, max: 250 },
+  { label: 'Más de 250 cc', min: 251, max: Infinity },
 ]
 
-const kmRanges = [
-  { label: 'Todos', min: 0, max: 999999 },
-  { label: 'Hasta 20.000 km', min: 0, max: 20000 },
-  { label: '20.000 - 50.000 km', min: 20000, max: 50000 },
-  { label: '50.000 - 100.000 km', min: 50000, max: 100000 },
-  { label: 'Más de 100.000 km', min: 100000, max: 999999 },
+/** Hay precios en pesos y en dólares: sin cotización, nunca se comparan entre sí. */
+const priceBands = [
+  { label: 'Hasta $2.000.000', currency: 'ARS', min: 0, max: 2000000 },
+  { label: '$2.000.000 a $3.000.000', currency: 'ARS', min: 2000000, max: 3000000 },
+  { label: '$3.000.000 a $6.500.000', currency: 'ARS', min: 3000000, max: 6500000 },
+  { label: 'Más de $6.500.000', currency: 'ARS', min: 6500000, max: Infinity },
+  { label: 'En dólares', currency: 'USD', min: 0, max: Infinity },
 ]
 
-const priceRanges = [
-  { label: 'Todos', min: 0, max: Infinity },
-  { label: 'Hasta USD 25.000', min: 0, max: 25000 },
-  { label: 'USD 25.000 - 40.000', min: 25000, max: 40000 },
-  { label: 'USD 40.000 - 55.000', min: 40000, max: 55000 },
-  { label: 'Más de USD 55.000', min: 55000, max: Infinity },
-]
+const inBand = (moto: Moto, band: (typeof priceBands)[number]) => moto.price !== null && moto.currency === band.currency && moto.price >= band.min && moto.price <= band.max
 
-const statusOptions = ['Disponible', 'Reservado', 'Vendido'] as const
+/** Agrupa por moneda para ordenar: los precios en dólares quedan juntos, en un extremo. */
+const priceRank = (moto: Moto) => (moto.currency === 'USD' ? 1e12 : 0) + (moto.price ?? 0)
 
-const sortOptions: { value: string; label: string; compare: (a: Vehicle, b: Vehicle) => number }[] = [
-  { value: 'relevancia', label: 'Destacados primero', compare: (a, b) => Number(b.featured) - Number(a.featured) },
-  { value: 'precio-asc', label: 'Menor precio', compare: (a, b) => a.price - b.price },
-  { value: 'precio-desc', label: 'Mayor precio', compare: (a, b) => b.price - a.price },
-  { value: 'anio-desc', label: 'Más nuevos', compare: (a, b) => b.year - a.year },
-  { value: 'km-asc', label: 'Menos kilómetros', compare: (a, b) => a.km - b.km },
+const sortOptions: { value: string; label: string; compare: (a: Moto, b: Moto) => number }[] = [
+  { value: 'relevancia', label: 'Destacadas primero', compare: (a, b) => Number(b.featured) - Number(a.featured) },
+  { value: 'precio-asc', label: 'Menor precio', compare: (a, b) => (a.price === null ? Infinity : priceRank(a)) - (b.price === null ? Infinity : priceRank(b)) },
+  { value: 'precio-desc', label: 'Mayor precio', compare: (a, b) => priceRank(b) - priceRank(a) },
+  { value: 'anio-desc', label: 'Más nuevas', compare: (a, b) => (b.year ?? 0) - (a.year ?? 0) },
+  { value: 'cc-asc', label: 'Menor cilindrada', compare: (a, b) => a.cc - b.cc },
 ]
 
 /** Busca sin distinguir mayúsculas ni tildes. */
 const normalize = (text: string) => text.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase()
 
-function Chip({ active, onClick, children }: { active: boolean; onClick: () => void; children: React.ReactNode }) {
-  return (
-    <button
-      type="button"
-      aria-pressed={active}
-      onClick={onClick}
-      className={cn(
-        'min-h-10 rounded-[2px] border px-3 text-[0.8125rem] transition-colors duration-300',
-        active
-          ? 'border-primary bg-primary font-semibold text-[#080808]'
-          : 'border-white/12 text-[#B8B8B8] hover:border-white/40 hover:text-white',
-      )}
-    >
-      {children}
-    </button>
-  )
+const unique = <T,>(values: T[]) => [...new Set(values)]
+
+interface Filters {
+  brand: string | null
+  model: string | null
+  cc: string | null
+  price: string | null
+  year: number | null
+  condition: string | null
+  category: string | null
+  status: string | null
 }
+
+const emptyFilters: Filters = { brand: null, model: null, cc: null, price: null, year: null, condition: null, category: null, status: null }
+
 
 function FilterGroup({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <fieldset className="border-t border-white/10 py-5">
-      <legend className="eyebrow float-left mb-3 w-full text-white/60">{title}</legend>
+    <fieldset className="border-t border-[#E2E6EC] py-4">
+      <legend className="eyebrow float-left mb-2.5 w-full text-[#20242B]">{title}</legend>
       <div className="clear-both flex flex-wrap gap-1.5">{children}</div>
     </fieldset>
   )
 }
 
-export function CatalogView() {
-  const params = useSearchParams()
-  const initialFilter = params.get('filter')
+interface CatalogViewProps {
+  /** Fija la categoría en las páginas de categoría. */
+  lockedCategory?: MotoCategory
+}
 
-  const [searchQuery, setSearchQuery] = useState('')
-  const [selectedBrand, setSelectedBrand] = useState<string | null>(null)
-  const [selectedType, setSelectedType] = useState<string | null>(null)
-  const [selectedYear, setSelectedYear] = useState(yearRanges[0])
-  const [selectedKm, setSelectedKm] = useState(kmRanges[0])
-  const [selectedPrice, setSelectedPrice] = useState(priceRanges[0])
-  const [selectedStatus, setSelectedStatus] = useState<string | null>(null)
-  const [showFeatured, setShowFeatured] = useState(initialFilter === 'destacados')
-  const [showNewArrivals, setShowNewArrivals] = useState(initialFilter === 'nuevos')
+export function CatalogView({ lockedCategory }: CatalogViewProps) {
+  const params = useSearchParams()
+  const conditionParam = params.get('condicion')
+  const categoryParam = params.get('categoria')
+
+  const [query, setQuery] = useState('')
+  const [filters, setFilters] = useState<Filters>({
+    ...emptyFilters,
+    category: lockedCategory ?? (categoryParam && categoryParam in categories ? categoryParam : null),
+    condition: conditionParam === 'usada' ? 'Usada' : conditionParam === '0km' ? '0 km' : null,
+  })
   const [sort, setSort] = useState(sortOptions[0].value)
 
-  const brands = getAllBrands()
-  const types = getAllTypes()
-
-  const filteredVehicles = useMemo(() => {
-    const query = normalize(searchQuery.trim())
-    const compare = sortOptions.find((option) => option.value === sort)!.compare
-
-    return vehicles
-      .filter((vehicle) => {
-        if (query) {
-          const haystack = normalize(`${vehicle.name} ${vehicle.brand} ${vehicle.model} ${vehicle.version}`)
-          if (!query.split(/\s+/).every((word) => haystack.includes(word))) return false
-        }
-        if (selectedBrand && vehicle.brand !== selectedBrand) return false
-        if (selectedType && vehicle.type !== selectedType) return false
-        if (selectedStatus && getVehicleStatus(vehicle) !== selectedStatus) return false
-        if (vehicle.year < selectedYear.min || vehicle.year > selectedYear.max) return false
-        if (vehicle.km < selectedKm.min || vehicle.km > selectedKm.max) return false
-        if (vehicle.price < selectedPrice.min || vehicle.price > selectedPrice.max) return false
-        if (showFeatured && !vehicle.featured) return false
-        if (showNewArrivals && !vehicle.newArrival) return false
-        return true
-      })
-      .sort(compare)
-  }, [searchQuery, selectedBrand, selectedType, selectedStatus, selectedYear, selectedKm, selectedPrice, showFeatured, showNewArrivals, sort])
-
-  const activeCount =
-    Number(Boolean(selectedBrand)) +
-    Number(Boolean(selectedType)) +
-    Number(Boolean(selectedStatus)) +
-    Number(selectedYear !== yearRanges[0]) +
-    Number(selectedKm !== kmRanges[0]) +
-    Number(selectedPrice !== priceRanges[0]) +
-    Number(showFeatured) +
-    Number(showNewArrivals)
-
-  const clearFilters = () => {
-    setSearchQuery('')
-    setSelectedBrand(null)
-    setSelectedType(null)
-    setSelectedStatus(null)
-    setSelectedYear(yearRanges[0])
-    setSelectedKm(kmRanges[0])
-    setSelectedPrice(priceRanges[0])
-    setShowFeatured(false)
-    setShowNewArrivals(false)
+  // Filtros vinculados al link del footer cuando ya se está en esta página.
+  const [lastParam, setLastParam] = useState(conditionParam)
+  if (conditionParam !== lastParam) {
+    setLastParam(conditionParam)
+    setFilters((current) => ({ ...current, condition: conditionParam === 'usada' ? 'Usada' : conditionParam === '0km' ? '0 km' : null }))
   }
 
-  const hasActiveFilters = activeCount > 0 || searchQuery !== ''
+  const toggle = <K extends keyof Filters>(key: K, value: Filters[K]) =>
+    setFilters((current) => ({ ...current, [key]: current[key] === value ? null : value }))
 
-  const filters = (
+  const options = useMemo(
+    () => ({
+      brands: unique(motos.map((moto) => moto.brand)).sort(),
+      models: unique(motos.map((moto) => moto.model)).sort(),
+      years: unique(motos.flatMap((moto) => (moto.year === null ? [] : [moto.year]))).sort((a, b) => b - a),
+      conditions: unique(motos.map((moto) => moto.condition)),
+      statuses: unique(motos.map((moto) => moto.status)),
+      cc: ccBands.filter((band) => motos.some((moto) => moto.cc >= band.min && moto.cc <= band.max)),
+      prices: priceBands.filter((band) => motos.some((moto) => inBand(moto, band))),
+    }),
+    [],
+  )
+
+  const results = useMemo(() => {
+    const words = normalize(query.trim()).split(/\s+/).filter(Boolean)
+    const compare = sortOptions.find((option) => option.value === sort)!.compare
+
+    return motos
+      .filter((moto) => {
+        const haystack = normalize(`${moto.name} ${moto.brand} ${moto.model} ${moto.version}`)
+        if (!words.every((word) => haystack.includes(word))) return false
+        if (filters.brand && moto.brand !== filters.brand) return false
+        if (filters.model && moto.model !== filters.model) return false
+        if (filters.year && moto.year !== filters.year) return false
+        if (filters.condition && moto.condition !== filters.condition) return false
+        if (filters.category && moto.category !== filters.category) return false
+        if (filters.status && moto.status !== filters.status) return false
+        const cc = ccBands.find((band) => band.label === filters.cc)
+        if (cc && (moto.cc < cc.min || moto.cc > cc.max)) return false
+        const price = priceBands.find((band) => band.label === filters.price)
+        return !price || inBand(moto, price)
+      })
+      .sort(compare)
+  }, [query, filters, sort])
+
+  const activeCount = (Object.keys(filters) as (keyof Filters)[]).filter((key) => filters[key] !== null && !(key === 'category' && lockedCategory)).length
+  const hasActive = activeCount > 0 || query !== ''
+
+  const clearAll = () => {
+    setQuery('')
+    setFilters({ ...emptyFilters, category: lockedCategory ?? null })
+  }
+
+  const chip = (label: string, active: boolean, onClick: () => void) => (
+    <button key={label} type="button" aria-pressed={active} onClick={onClick} className="chip">
+      {label}
+    </button>
+  )
+
+  const filterPanel = (
     <>
-      <FilterGroup title="Selección">
-        <Chip active={showFeatured} onClick={() => setShowFeatured(!showFeatured)}>Destacados</Chip>
-        <Chip active={showNewArrivals} onClick={() => setShowNewArrivals(!showNewArrivals)}>Nuevos ingresos</Chip>
-      </FilterGroup>
-      <FilterGroup title="Marca">
-        {brands.map((brand) => (
-          <Chip key={brand} active={selectedBrand === brand} onClick={() => setSelectedBrand(selectedBrand === brand ? null : brand)}>
-            {brand}
-          </Chip>
-        ))}
-      </FilterGroup>
-      <FilterGroup title="Precio">
-        {priceRanges.map((range) => (
-          <Chip key={range.label} active={selectedPrice === range} onClick={() => setSelectedPrice(range)}>{range.label}</Chip>
-        ))}
-      </FilterGroup>
-      <FilterGroup title="Año">
-        {yearRanges.map((range) => (
-          <Chip key={range.label} active={selectedYear === range} onClick={() => setSelectedYear(range)}>{range.label}</Chip>
-        ))}
-      </FilterGroup>
-      <FilterGroup title="Tipo">
-        {types.map((type) => (
-          <Chip key={type} active={selectedType === type} onClick={() => setSelectedType(selectedType === type ? null : type)}>
-            {type}
-          </Chip>
-        ))}
-      </FilterGroup>
-      <FilterGroup title="Kilometraje">
-        {kmRanges.map((range) => (
-          <Chip key={range.label} active={selectedKm === range} onClick={() => setSelectedKm(range)}>{range.label}</Chip>
-        ))}
-      </FilterGroup>
-      <FilterGroup title="Disponibilidad">
-        {statusOptions.map((status) => (
-          <Chip key={status} active={selectedStatus === status} onClick={() => setSelectedStatus(selectedStatus === status ? null : status)}>
-            {status}
-          </Chip>
-        ))}
-      </FilterGroup>
+      {!lockedCategory && (
+        <FilterGroup title="Categoría">
+          {activeCategories().map((key) => chip(categories[key].name, filters.category === key, () => toggle('category', key)))}
+        </FilterGroup>
+      )}
+      <FilterGroup title="Condición">{options.conditions.map((item) => chip(item, filters.condition === item, () => toggle('condition', item)))}</FilterGroup>
+      <FilterGroup title="Marca">{options.brands.map((item) => chip(item, filters.brand === item, () => toggle('brand', item)))}</FilterGroup>
+      <FilterGroup title="Modelo">{options.models.map((item) => chip(item, filters.model === item, () => toggle('model', item)))}</FilterGroup>
+      <FilterGroup title="Cilindrada">{options.cc.map((band) => chip(band.label, filters.cc === band.label, () => toggle('cc', band.label)))}</FilterGroup>
+      <FilterGroup title="Precio">{options.prices.map((band) => chip(band.label, filters.price === band.label, () => toggle('price', band.label)))}</FilterGroup>
+      <FilterGroup title="Año">{options.years.map((year) => chip(String(year), filters.year === year, () => toggle('year', year)))}</FilterGroup>
+      <FilterGroup title="Disponibilidad">{options.statuses.map((item) => chip(item, filters.status === item, () => toggle('status', item)))}</FilterGroup>
     </>
   )
 
-  const clearButton = hasActiveFilters && (
-    <button type="button" onClick={clearFilters} className="link-line !bg-none text-[#B8B8B8] hover:text-white">
+  const clearButton = hasActive && (
+    <button type="button" onClick={clearAll} className="link-line !min-h-9">
       <X />
-      Limpiar filtros
+      Limpiar
     </button>
   )
 
   return (
-    <section className="bg-[#080808] pb-24">
-      {/* Barra fija: búsqueda y orden siempre a mano. */}
-      <div className="glass-nav sticky top-0 z-20 border-y border-white/8">
+    <section className="bg-white pb-20 lg:pb-28">
+      <div className="glass-light sticky top-16 z-20 border-b border-[#E2E6EC] lg:top-20">
         <div className="shell flex items-center gap-2 py-2.5 md:gap-3">
           <div className="relative min-w-0 flex-1">
-            <Search aria-hidden="true" className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-[#8d8d8d]" />
+            <Search aria-hidden="true" className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-[#5A6270]" />
             <input
               type="search"
-              value={searchQuery}
-              onChange={(event) => setSearchQuery(event.target.value)}
-              placeholder="Buscar por marca o modelo"
-              aria-label="Buscar vehículos"
-              className="h-11 w-full rounded-[3px] border border-white/10 bg-[#111111] pr-3 pl-10 text-base text-white outline-none transition-colors placeholder:text-[#8d8d8d] focus:border-primary md:text-sm"
+              value={query}
+              onChange={(event) => setQuery(event.target.value)}
+              placeholder="Buscá por marca o modelo"
+              aria-label="Buscar motos"
+              className="h-11 w-full rounded-lg border border-[#DCE1E8] bg-white pr-3 pl-10 text-base outline-none transition-colors placeholder:text-[#79818F] focus:border-primary md:text-sm"
             />
           </div>
 
           <div className="relative hidden sm:block">
             <select
-              aria-label="Ordenar vehículos"
+              aria-label="Ordenar motos"
               value={sort}
               onChange={(event) => setSort(event.target.value)}
-              className="h-11 appearance-none rounded-[3px] border border-white/10 bg-[#111111] pr-9 pl-3 text-sm text-white outline-none focus:border-primary"
+              className="h-11 appearance-none rounded-lg border border-[#DCE1E8] bg-white pr-9 pl-3 text-sm outline-none focus:border-primary"
             >
               {sortOptions.map((option) => (
-                <option key={option.value} value={option.value}>{option.label}</option>
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
               ))}
             </select>
-            <ChevronDown aria-hidden="true" className="pointer-events-none absolute top-1/2 right-3 h-4 w-4 -translate-y-1/2 text-[#8d8d8d]" />
+            <ChevronDown aria-hidden="true" className="pointer-events-none absolute top-1/2 right-3 h-4 w-4 -translate-y-1/2 text-[#5A6270]" />
           </div>
 
           <Drawer>
             <DrawerTrigger asChild>
-              <button
-                type="button"
-                className="relative flex h-11 shrink-0 items-center gap-2 rounded-[3px] border border-white/10 bg-[#111111] px-3 text-sm text-white lg:hidden"
-              >
+              <button type="button" className="relative flex h-11 shrink-0 items-center gap-2 rounded-lg border border-[#DCE1E8] bg-white px-3 text-sm font-semibold lg:hidden">
                 <SlidersHorizontal className="h-4 w-4 text-primary" />
                 Filtros
-                {activeCount > 0 && (
-                  <span className="tabular flex h-5 min-w-5 items-center justify-center bg-primary px-1 text-xs font-semibold text-[#080808]">
-                    {activeCount}
-                  </span>
-                )}
+                {activeCount > 0 && <span className="tabular flex h-5 min-w-5 items-center justify-center rounded bg-primary px-1 text-xs font-semibold text-white">{activeCount}</span>}
               </button>
             </DrawerTrigger>
-            <DrawerContent className="max-h-[88svh] border-white/10 bg-[#111111]">
-              <div className="flex items-center justify-between px-5 pt-3 pb-4">
-                <DrawerTitle className="display text-xl">Filtros</DrawerTitle>
+            <DrawerContent className="max-h-[88svh] bg-white">
+              <div className="flex items-center justify-between px-4 pt-3 pb-2">
+                <DrawerTitle className="font-display text-xl font-bold">Filtros</DrawerTitle>
                 {clearButton}
               </div>
-              <div className="overflow-y-auto px-5">
+              <div className="overflow-y-auto px-4">
                 <div className="sm:hidden">
-                  <fieldset className="border-t border-white/10 py-5">
-                    <legend className="eyebrow float-left mb-3 w-full text-white/60">Ordenar por</legend>
-                    <div className="clear-both flex flex-wrap gap-1.5">
-                      {sortOptions.map((option) => (
-                        <Chip key={option.value} active={sort === option.value} onClick={() => setSort(option.value)}>
-                          {option.label}
-                        </Chip>
-                      ))}
-                    </div>
-                  </fieldset>
+                  <FilterGroup title="Ordenar por">{sortOptions.map((option) => chip(option.label, sort === option.value, () => setSort(option.value)))}</FilterGroup>
                 </div>
-                {filters}
+                {filterPanel}
               </div>
-              <div className="safe-bottom border-t border-white/10 p-4">
+              <div className="safe-bottom border-t border-[#E2E6EC] p-4">
                 <DrawerClose asChild>
                   <button type="button" className="btn btn-primary w-full">
-                    Ver {filteredVehicles.length} {filteredVehicles.length === 1 ? 'vehículo' : 'vehículos'}
+                    Ver {results.length} {results.length === 1 ? 'moto' : 'motos'}
                   </button>
                 </DrawerClose>
               </div>
@@ -269,42 +232,39 @@ export function CatalogView() {
         </div>
       </div>
 
-      <div className="shell mt-8 grid gap-8 lg:grid-cols-[17.5rem_1fr] lg:gap-12">
-        <aside aria-label="Filtros" className="hidden pr-2 [scrollbar-color:#3a3a3a_transparent] [scrollbar-width:thin] lg:sticky lg:top-20 lg:block lg:max-h-[calc(100svh-6rem)] lg:self-start lg:overflow-y-auto">
-          {filters}
-          <div className="border-t border-white/10 pt-4">{clearButton}</div>
+      <div className="shell mt-8 grid gap-8 lg:grid-cols-[16.5rem_1fr] lg:gap-12">
+        <aside aria-label="Filtros" className="hidden lg:sticky lg:top-40 lg:block lg:max-h-[calc(100svh-11rem)] lg:self-start lg:overflow-y-auto lg:pr-2">
+          {filterPanel}
+          <div className="border-t border-[#E2E6EC] pt-2">{clearButton}</div>
         </aside>
 
         <div className="min-w-0">
-          <p aria-live="polite" className="mb-5 text-sm text-[#B8B8B8]">
-            <span className="tabular text-base text-white">{filteredVehicles.length}</span>{' '}
-            {filteredVehicles.length === 1 ? 'vehículo encontrado' : 'vehículos encontrados'}
+          <p aria-live="polite" className="mb-5 text-sm text-[#5A6270]">
+            <span className="tabular text-base font-bold text-[#080A0E]">{results.length}</span> {results.length === 1 ? 'moto encontrada' : 'motos encontradas'}
           </p>
 
-          {filteredVehicles.length > 0 ? (
+          {results.length > 0 ? (
             <motion.div layout="position" className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3 xl:gap-5">
               <AnimatePresence mode="popLayout" initial={false}>
-                {filteredVehicles.map((vehicle) => (
-                  <motion.div
-                    key={vehicle.id}
-                    layout="position"
-                    initial={{ opacity: 0, y: 16 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0 }}
-                    transition={{ duration: 0.45, ease }}
-                  >
-                    <VehicleCard vehicle={vehicle} sizes="(max-width: 640px) 100vw, (max-width: 1280px) 50vw, 26vw" />
+                {results.map((moto, index) => (
+                  <motion.div key={moto.id} layout="position" initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} transition={{ duration: 0.45, ease }}>
+                    <MotoCard moto={moto} tone={index % 2 === 0 ? 'white' : 'gray'} sizes="(max-width: 640px) 100vw, (max-width: 1280px) 40vw, 26vw" />
                   </motion.div>
                 ))}
               </AnimatePresence>
             </motion.div>
           ) : (
-            <div className="border border-white/10 px-6 py-20 text-center">
-              <h2 className="display display-md text-white">Sin resultados</h2>
-              <p className="mt-3 text-[#B8B8B8]">Intentá modificar los filtros o realizar una nueva búsqueda.</p>
-              <button type="button" onClick={clearFilters} className="btn btn-ghost mt-6">
-                Limpiar filtros
-              </button>
+            <div className={cn('rounded-xl bg-[#F3F5F8] px-6 py-16 text-center')}>
+              <h2 className="font-display text-2xl font-bold">No hay motos con esos filtros</h2>
+              <p className="mx-auto mt-2 max-w-md text-[#5A6270]">Probá con menos filtros, o contanos qué buscás y lo vemos juntos.</p>
+              <div className="mt-6 flex flex-col justify-center gap-2 sm:flex-row">
+                <button type="button" onClick={clearAll} className="btn btn-outline">
+                  Limpiar filtros
+                </button>
+                <Link href="/#encontra-tu-moto" className="btn btn-primary">
+                  Ayudame a elegir
+                </Link>
+              </div>
             </div>
           )}
         </div>

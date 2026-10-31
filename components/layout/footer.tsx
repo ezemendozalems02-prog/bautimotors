@@ -1,124 +1,88 @@
 import Link from 'next/link'
-import { Facebook, Instagram } from 'lucide-react'
+import { Instagram, MapPin, MessageCircle } from 'lucide-react'
 import { Logo } from '@/components/brand/logo'
-import { primaryNav, secondaryNav, site, whatsappUrl } from '@/lib/site'
-
-const serviceLinks = [
-  { name: 'Venta de vehículos', href: '/catalogo' },
-  { name: 'Toma de usados', href: '/vende-tu-auto' },
-  { name: 'Asesoramiento', href: '/servicios' },
-  { name: 'Financiación', href: '/servicios' },
-]
-
-const socialLinks = [
-  { name: 'Instagram', href: site.social.instagram, icon: Instagram },
-  { name: 'Facebook', href: site.social.facebook, icon: Facebook },
-].filter((item) => item.href)
-
-function ColumnTitle({ children }: { children: React.ReactNode }) {
-  return <h2 className="eyebrow mb-5 text-white/50">{children}</h2>
-}
-
-const linkClass = 'inline-block py-1 text-sm text-[#B8B8B8] transition-colors duration-300 hover:text-primary'
+import { activeCategories, categories } from '@/lib/motos'
+import { financingDisclaimer, primaryNav, secondaryNav, site } from '@/lib/site'
+import { messages, whatsappUrl } from '@/lib/whatsapp'
 
 export function Footer() {
   return (
-    <footer className="relative overflow-hidden bg-[#080808]">
-      <div className="h-px bg-[linear-gradient(90deg,transparent,rgb(255_212_0/0.45),transparent)]" />
+    <footer className="bg-[#080A0E] text-white">
+      <div className="shell pt-16 pb-10 lg:pt-24">
+        <p className="display display-xl max-w-5xl">
+          {site.tagline} <span className="text-[#3985FF]">Empezá con tu DNI.</span>
+        </p>
 
-      <div className="shell pt-16 lg:pt-24">
-        <div className="grid gap-12 md:grid-cols-[1.5fr_1fr_1fr_1.3fr]">
-          <div className="max-w-xs">
-            <Link href="/" aria-label="Bauti Motors, inicio" className="inline-block text-lg">
-              <Logo />
-            </Link>
-            <p className="mt-6 text-sm leading-relaxed text-[#B8B8B8]">
-              Calidad, confianza y una experiencia a otro nivel.
+        <div className="mt-14 grid gap-10 border-t border-white/10 pt-10 sm:grid-cols-2 lg:grid-cols-[1.4fr_1fr_1fr_1.3fr]">
+          <div>
+            <Logo className="text-base" />
+            <p className="mt-4 max-w-xs text-sm leading-relaxed text-[#A8AFBC]">
+              Motos 0 km y usadas en Tortuguitas, con orientación a alternativas de financiación.
             </p>
-            {socialLinks.length > 0 && (
-              <div className="mt-6 flex gap-2">
-                {socialLinks.map((item) => (
-                  <a
-                    key={item.name}
-                    href={item.href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    aria-label={item.name}
-                    className="flex h-11 w-11 items-center justify-center border border-white/15 text-[#B8B8B8] transition-colors duration-300 hover:border-primary hover:text-primary"
-                  >
-                    <item.icon className="h-4 w-4" />
-                  </a>
-                ))}
-              </div>
-            )}
           </div>
 
-          <div className="grid grid-cols-2 gap-10 md:col-span-2">
-            <div>
-              <ColumnTitle>Navegación</ColumnTitle>
-              <ul>
-                {[...primaryNav, ...secondaryNav].map((item) => (
-                  <li key={item.href}>
-                    <Link href={item.href} className={linkClass}>
-                      {item.name}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
-            <div>
-              <ColumnTitle>Servicios</ColumnTitle>
-              <ul>
-                {serviceLinks.map((item) => (
-                  <li key={item.name}>
-                    <Link href={item.href} className={linkClass}>
-                      {item.name}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </div>
+          <nav aria-label="Secciones">
+            <h2 className="eyebrow text-[#A8AFBC]">Explorá</h2>
+            <ul className="mt-3 text-sm">
+              {[...primaryNav.slice(1), ...secondaryNav].map((item) => (
+                <li key={item.href}>
+                  <Link href={item.href} className="inline-flex min-h-9 items-center text-white/85 transition-colors hover:text-[#3985FF]">
+                    {item.name}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </nav>
+
+          <nav aria-label="Categorías">
+            <h2 className="eyebrow text-[#A8AFBC]">Categorías</h2>
+            <ul className="mt-3 text-sm">
+              {activeCategories().map((key) => (
+                <li key={key}>
+                  <Link href={`/motos/categoria/${key}`} className="inline-flex min-h-9 items-center text-white/85 transition-colors hover:text-[#3985FF]">
+                    {categories[key].name}
+                  </Link>
+                </li>
+              ))}
+              <li>
+                <Link href="/motos?condicion=usada" className="inline-flex min-h-9 items-center text-white/85 transition-colors hover:text-[#3985FF]">
+                  Motos usadas
+                </Link>
+              </li>
+            </ul>
+          </nav>
 
           <div>
-            <ColumnTitle>Contacto</ColumnTitle>
-            <ul className="space-y-1">
+            <h2 className="eyebrow text-[#A8AFBC]">Contacto</h2>
+            <ul className="mt-3 grid gap-1 text-sm">
               <li>
-                <a href={whatsappUrl()} target="_blank" rel="noopener noreferrer" className={`${linkClass} tabular`}>
+                <a href={whatsappUrl(messages.general())} target="_blank" rel="noopener noreferrer" className="inline-flex min-h-10 items-center gap-2.5 transition-colors hover:text-[#3985FF]">
+                  <MessageCircle className="h-4 w-4 shrink-0 text-[#3985FF]" />
                   {site.phoneDisplay}
                 </a>
               </li>
               <li>
-                <a href={`mailto:${site.email}`} className={linkClass}>
-                  {site.email}
+                <a href={site.instagram.url} target="_blank" rel="noopener noreferrer" className="inline-flex min-h-10 items-center gap-2.5 transition-colors hover:text-[#3985FF]">
+                  <Instagram className="h-4 w-4 shrink-0 text-[#3985FF]" />
+                  {site.instagram.handle}
                 </a>
               </li>
-              <li className="pt-1 text-sm text-[#B8B8B8]">{site.location}</li>
-              {site.hours.map((line) => (
-                <li key={line} className="text-sm text-[#B8B8B8]">
-                  {line}
-                </li>
-              ))}
+              <li>
+                <a href={site.mapsUrl} target="_blank" rel="noopener noreferrer" className="inline-flex gap-2.5 py-2 transition-colors hover:text-[#3985FF]">
+                  <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-[#3985FF]" />
+                  {site.address.display}
+                </a>
+              </li>
             </ul>
           </div>
         </div>
 
-        <div className="mt-14 flex flex-col gap-2 border-t border-white/8 py-6 md:flex-row md:items-center md:justify-between">
-          <p className="text-xs text-[#B8B8B8]">
-            © {new Date().getFullYear()} Bauti Motors. Todos los derechos reservados.
+        <div className="mt-10 border-t border-white/10 pt-6 text-xs leading-relaxed text-[#A8AFBC]">
+          <p className="max-w-3xl">{financingDisclaimer}</p>
+          <p className="mt-3">
+            © {new Date().getFullYear()} {site.name}. Las ilustraciones de campaña no representan unidades del stock.
           </p>
-          <p className="eyebrow text-white/40">{site.location}</p>
         </div>
-      </div>
-
-      {/* La marca se apoya en el borde inferior, cortada a propósito. */}
-      <div aria-hidden="true" className="select-none overflow-hidden">
-        <p
-          className="display text-outline -mb-[0.2em] whitespace-nowrap text-center text-[21vw] leading-none"
-          style={{ fontStretch: '125%' }}
-        >
-          BAUTI
-        </p>
       </div>
     </footer>
   )

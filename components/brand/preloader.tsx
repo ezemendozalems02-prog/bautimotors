@@ -1,14 +1,16 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { animate, motion } from 'framer-motion'
+import Image from 'next/image'
+import { motion } from 'framer-motion'
 import { Logo } from '@/components/brand/logo'
 import { ease, finishIntro } from '@/components/motion/primitives'
 
-const DURATION = 1.9
+/** Duración total: breve a propósito. No hay porcentajes: no simula una carga. */
+const HOLD_MS = 1250
+const EXIT_MS = 650
 
 export function Preloader() {
-  const [progress, setProgress] = useState(0)
   const [leaving, setLeaving] = useState(false)
 
   useEffect(() => {
@@ -23,76 +25,65 @@ export function Preloader() {
     }
 
     let exitTimer: number
-    const controls = animate(0, 100, {
-      duration: DURATION,
-      delay: 0.25,
-      ease: [0.45, 0.05, 0.25, 1],
-      onUpdate: (latest) => setProgress(Math.round(latest)),
-      onComplete: () => {
-        setLeaving(true)
-        exitTimer = window.setTimeout(finishIntro, 950)
-      },
-    })
+    const holdTimer = window.setTimeout(() => {
+      setLeaving(true)
+      exitTimer = window.setTimeout(finishIntro, EXIT_MS)
+    }, HOLD_MS)
 
     return () => {
-      controls.stop()
+      window.clearTimeout(holdTimer)
       window.clearTimeout(exitTimer)
     }
   }, [])
 
   return (
     <motion.div
-      className="preloader fixed inset-0 z-[100] overflow-hidden bg-[#080808]"
+      className="preloader fixed inset-0 z-[100] overflow-hidden bg-[#05070B]"
       role="status"
-      aria-label="Cargando Bauti Motors"
+      aria-label="Cargando Tu Moto Ya"
       initial={false}
       animate={leaving ? { clipPath: 'inset(0 0 100% 0)' } : { clipPath: 'inset(0 0 0% 0)' }}
-      transition={{ duration: 0.95, ease: [0.76, 0, 0.24, 1] }}
+      transition={{ duration: EXIT_MS / 1000, ease: [0.76, 0, 0.24, 1] }}
     >
-      {/* Luz amarilla muy tenue detrás de la marca. */}
+      {/* La moto aparece detrás de la línea, a través de una máscara que abre a lo ancho. */}
       <motion.div
         aria-hidden="true"
-        className="absolute top-1/2 left-1/2 h-[50vmin] w-[90vmin] -translate-x-1/2 -translate-y-1/2 bg-[radial-gradient(closest-side,rgb(255_212_0/0.1),transparent)]"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 1.6, ease: 'easeOut' }}
+        className="absolute inset-0"
+        initial={{ clipPath: 'inset(49% 100% 49% 0)', opacity: 0.9 }}
+        animate={{ clipPath: 'inset(0% 0% 0% 0)', opacity: 0.55 }}
+        transition={{ duration: 0.95, delay: 0.3, ease }}
+      >
+        <picture>
+          <source media="(max-width: 767px)" srcSet="/images/hero-mobile.webp" />
+          <Image src="/images/hero-desktop.webp" alt="" fill sizes="100vw" className="object-cover" priority />
+        </picture>
+      </motion.div>
+
+      <motion.span
+        aria-hidden="true"
+        className="absolute top-1/2 left-0 h-[2px] w-full origin-left bg-[linear-gradient(90deg,transparent,#1769E8_40%,#3985FF_75%,#fff)] shadow-[0_0_24px_#3985FF]"
+        initial={{ scaleX: 0, opacity: 1 }}
+        animate={{ scaleX: 1, opacity: 0 }}
+        transition={{ scaleX: { duration: 0.7, ease }, opacity: { duration: 0.45, delay: 0.55 } }}
       />
 
       <div className="absolute inset-0 flex items-center justify-center">
         <motion.div
-          initial={{ opacity: 0, y: 12 }}
-          animate={leaving ? { opacity: 0, y: -16 } : { opacity: 1, y: 0 }}
-          transition={{ duration: leaving ? 0.45 : 0.9, ease }}
+          initial={{ opacity: 0, y: 14, filter: 'blur(6px)' }}
+          animate={leaving ? { opacity: 0, y: -14 } : { opacity: 1, y: 0, filter: 'blur(0px)' }}
+          transition={{ duration: leaving ? 0.3 : 0.7, delay: leaving ? 0 : 0.25, ease }}
         >
-          <Logo className="text-[1.25rem] md:text-[1.75rem]" />
+          <Logo className="text-[1.5rem] md:text-[2.1rem]" />
         </motion.div>
       </div>
 
-      {/* Línea de velocidad: cruza la pantalla una vez. */}
-      <motion.span
-        aria-hidden="true"
-        className="absolute top-[calc(50%+4rem)] left-0 h-px w-full origin-left bg-[linear-gradient(90deg,transparent,#FFD400_70%,#fff)]"
-        initial={{ scaleX: 0, opacity: 1 }}
-        animate={{ scaleX: 1, opacity: 0 }}
-        transition={{ scaleX: { duration: 1.1, delay: 0.2, ease }, opacity: { duration: 0.7, delay: 1.1 } }}
-      />
-
-      <div className="absolute inset-x-0 bottom-0 pb-8">
-        <div className="shell flex items-end justify-between">
-          <span className="eyebrow text-[#B8B8B8]">Preparando la experiencia</span>
-          <span className="tabular text-4xl font-light text-white md:text-5xl">
-            {String(progress).padStart(2, '0')}
-            <span className="ml-0.5 text-lg text-primary">%</span>
-          </span>
-        </div>
-        <div className="shell mt-4">
-          <div className="h-px w-full bg-[#252525]">
-            <div
-              className="h-px origin-left bg-primary"
-              style={{ transform: `scaleX(${progress / 100})` }}
-            />
-          </div>
-        </div>
+      {/* Indicador discreto: se mueve mientras carga, sin inventar un porcentaje. */}
+      <div aria-hidden="true" className="absolute bottom-[calc(2rem+env(safe-area-inset-bottom))] left-1/2 h-px w-24 -translate-x-1/2 overflow-hidden bg-white/15">
+        <motion.span
+          className="block h-full w-1/2 bg-[#3985FF]"
+          animate={{ x: ['-100%', '200%'] }}
+          transition={{ duration: 1, repeat: Infinity, ease: 'easeInOut' }}
+        />
       </div>
     </motion.div>
   )

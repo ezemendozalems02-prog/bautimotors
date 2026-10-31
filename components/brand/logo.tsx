@@ -6,14 +6,15 @@ interface MarkProps {
   tone?: 'light' | 'dark'
 }
 
-/** Isotipo: una B de hojas inclinadas hacia adelante, cortada como una pieza mecanizada. */
+/**
+ * Isotipo y logotipo PROVISORIOS: no había un logo oficial en el proyecto.
+ * Al recibirlo, este archivo y /public/icon.svg son lo único a reemplazar.
+ */
 export function LogoMark({ className, tone = 'light' }: MarkProps) {
-  const fill = tone === 'light' ? '#FFFFFF' : '#080808'
   return (
     <svg viewBox="0 0 64 64" className={cn('h-8 w-8', className)} aria-hidden="true">
-      <polygon points="13,6 24,6 13,58 2,58" fill={fill} />
-      <polygon points="29,6 50,6 59,18 51,30 24,30" fill={fill} />
-      <polygon points="23,34 53,34 62,46 52,58 18,58" fill="#FFD400" />
+      <polygon points="13,14 53,14 50,25 36,25 29,52 17,52 24,25 10,25" fill={tone === 'light' ? '#FFFFFF' : '#080A0E'} />
+      <polygon points="38,29 50,29 46,41 34,41" fill={tone === 'light' ? '#3985FF' : '#1769E8'} />
     </svg>
   )
 }
@@ -25,27 +26,17 @@ interface LogoProps extends MarkProps {
 
 export function Logo({ className, tone = 'light', variant = 'full' }: LogoProps) {
   return (
-    <span className={cn('inline-flex items-center gap-3', className)} aria-label="Bauti Motors">
+    <span className={cn('inline-flex items-center gap-[0.35em]', className)} role="img" aria-label="Tu Moto Ya">
       <LogoMark tone={tone} className="h-[1.9em] w-[1.9em] shrink-0" />
       {variant === 'full' && (
-        <span className="flex flex-col" aria-hidden="true">
-          <span
-            className={cn(
-              'font-display text-[1.28em] leading-none font-extrabold tracking-[0.015em]',
-              tone === 'light' ? 'text-white' : 'text-[#080808]',
-            )}
-            style={{ fontStretch: '125%' }}
-          >
-            BAUTI
-          </span>
-          <span
-            className={cn(
-              'mt-[0.32em] font-tech text-[0.56em] leading-none font-medium tracking-[0.5em]',
-              tone === 'light' ? 'text-[#B8B8B8]' : 'text-[#252525]',
-            )}
-          >
-            MOTORS
-          </span>
+        <span
+          aria-hidden="true"
+          className={cn(
+            'font-display text-[1.2em] leading-none font-extrabold tracking-[-0.03em] italic [word-spacing:0.12em]',
+            tone === 'light' ? 'text-white' : 'text-[#080A0E]',
+          )}
+        >
+          TU MOTO <span className={tone === 'light' ? 'text-[#3985FF]' : 'text-[#1769E8]'}>YA</span>
         </span>
       )}
     </span>
