@@ -6,15 +6,11 @@ interface MarkProps {
   tone?: 'light' | 'dark'
 }
 
-/** Isotipo: una B de hojas inclinadas hacia adelante, cortada como una pieza mecanizada. */
-export function LogoMark({ className, tone = 'light' }: MarkProps) {
-  const fill = tone === 'light' ? '#FFFFFF' : '#090909'
+/** Isotipo de Ghanima Motors (logo original, fondo transparente). */
+export function LogoMark({ className }: MarkProps) {
   return (
-    <svg viewBox="0 0 64 64" className={cn('h-8 w-8', className)} aria-hidden="true">
-      <polygon points="13,6 24,6 13,58 2,58" fill={fill} />
-      <polygon points="29,6 50,6 59,18 51,30 24,30" fill={fill} />
-      <polygon points="23,34 53,34 62,46 52,58 18,58" fill="#E3262E" />
-    </svg>
+    // eslint-disable-next-line @next/next/no-img-element
+    <img src="/logo-mark.png" alt="" width={256} height={256} className={cn('h-8 w-8 object-contain', className)} aria-hidden="true" />
   )
 }
 

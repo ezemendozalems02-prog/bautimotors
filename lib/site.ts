@@ -21,6 +21,7 @@ export const primaryNav = [
   { name: 'Inicio', href: '/' },
   { name: 'Vehículos', href: '/catalogo' },
   { name: 'Nosotros', href: '/nosotros' },
+  { name: 'Preguntas frecuentes', shortName: 'Preguntas', href: '/#preguntas-frecuentes' },
   { name: 'Contacto', href: '/contacto' },
 ]
 

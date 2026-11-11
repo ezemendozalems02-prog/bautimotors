@@ -11,6 +11,7 @@ import { defaultWhatsappMessage, primaryNav, secondaryNav, site, whatsappUrl } f
 import { cn } from '@/lib/utils'
 
 function isActive(pathname: string, href: string) {
+  if (href.includes('#')) return false
   return href === '/' ? pathname === '/' : pathname.startsWith(href)
 }
 
@@ -75,7 +76,7 @@ export function Header() {
                       active ? 'text-white' : 'text-[#B8B8B8] hover:text-white',
                     )}
                   >
-                    {item.name}
+                    {'shortName' in item ? item.shortName : item.name}
                     {active && (
                       <motion.span
                         layoutId="nav-indicator"
