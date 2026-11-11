@@ -1,9 +1,9 @@
 /**
- * Datos comerciales de Bauti Motors. Es la única fuente de verdad:
+ * Datos comerciales de Ghanima Motors. Es la única fuente de verdad:
  * cambiar un valor acá lo actualiza en todo el sitio.
  */
 export const site = {
-  name: 'Bauti Motors',
+  name: 'Ghanima Motors',
   /** Número en formato internacional, sin signos. Es el mismo que tenía el sitio. */
   whatsappNumber: '5491100000000',
   phoneDisplay: '+54 9 11 0000-0000',
@@ -30,7 +30,7 @@ export const secondaryNav = [
 ]
 
 export const defaultWhatsappMessage =
-  'Hola, vengo desde la web de Bauti Motors y quiero consultar por un vehículo.'
+  'Hola, vengo desde la web de Ghanima Motors y quiero consultar por un vehículo.'
 
 export function whatsappUrl(message?: string) {
   const base = `https://wa.me/${site.whatsappNumber}`

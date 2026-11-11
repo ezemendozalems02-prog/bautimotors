@@ -58,7 +58,7 @@ export function Header() {
             scrolled ? 'h-16' : 'h-20 lg:h-24',
           )}
         >
-          <Link href="/" aria-label="Bauti Motors, inicio" className="relative z-10 text-[0.95rem] transition-opacity hover:opacity-80">
+          <Link href="/" aria-label="Ghanima Motors, inicio" className="relative z-10 text-[0.95rem] transition-opacity hover:opacity-80">
             <Logo />
           </Link>
 
@@ -129,7 +129,7 @@ export function Header() {
         {open && (
           <motion.div
             id="menu-mobile"
-            className="fixed inset-0 z-40 flex flex-col overflow-y-auto bg-[#080808] lg:hidden"
+            className="fixed inset-0 z-40 flex flex-col overflow-y-auto bg-[#090909] lg:hidden"
             initial={{ clipPath: 'inset(0 0 100% 0)' }}
             animate={{ clipPath: 'inset(0 0 0% 0)' }}
             exit={{ clipPath: 'inset(0 0 100% 0)' }}

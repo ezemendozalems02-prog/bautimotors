@@ -30,11 +30,11 @@ export default function ContactoPage() {
         Estamos para ayudarte a encontrar el auto indicado.
       </PageHero>
 
-      <section className="bg-[#080808] pb-20 lg:pb-32">
+      <section className="bg-[#090909] pb-20 lg:pb-32">
         <div className="shell grid gap-12 lg:grid-cols-12">
           <Reveal className="lg:col-span-5">
             <a
-              href={whatsappUrl('Hola, vengo desde la web de Bauti Motors y quiero consultar.')}
+              href={whatsappUrl('Hola, vengo desde la web de Ghanima Motors y quiero consultar.')}
               target="_blank"
               rel="noopener noreferrer"
               className="btn btn-primary w-full sm:!min-h-16"

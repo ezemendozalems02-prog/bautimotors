@@ -17,7 +17,7 @@ const services = [
 
 export function ServicesPreview() {
   return (
-    <section className="bg-[#080808] py-20 lg:py-32">
+    <section className="bg-[#090909] py-20 lg:py-32">
       <div className="shell">
         <div className="mb-10 flex flex-col gap-6 md:flex-row md:items-end md:justify-between lg:mb-14">
           <SectionHeading index="05" label="Servicios" lines={['Todo lo que', 'necesitás']} />

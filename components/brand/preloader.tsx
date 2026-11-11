@@ -42,17 +42,17 @@ export function Preloader() {
 
   return (
     <motion.div
-      className="preloader fixed inset-0 z-[100] overflow-hidden bg-[#080808]"
+      className="preloader fixed inset-0 z-[100] overflow-hidden bg-[#090909]"
       role="status"
-      aria-label="Cargando Bauti Motors"
+      aria-label="Cargando Ghanima Motors"
       initial={false}
       animate={leaving ? { clipPath: 'inset(0 0 100% 0)' } : { clipPath: 'inset(0 0 0% 0)' }}
       transition={{ duration: 0.95, ease: [0.76, 0, 0.24, 1] }}
     >
-      {/* Luz amarilla muy tenue detrás de la marca. */}
+      {/* Luz roja muy tenue detrás de la marca. */}
       <motion.div
         aria-hidden="true"
-        className="absolute top-1/2 left-1/2 h-[50vmin] w-[90vmin] -translate-x-1/2 -translate-y-1/2 bg-[radial-gradient(closest-side,rgb(255_212_0/0.1),transparent)]"
+        className="absolute top-1/2 left-1/2 h-[50vmin] w-[90vmin] -translate-x-1/2 -translate-y-1/2 bg-[radial-gradient(closest-side,rgb(227_38_46/0.1),transparent)]"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 1.6, ease: 'easeOut' }}
@@ -71,7 +71,7 @@ export function Preloader() {
       {/* Línea de velocidad: cruza la pantalla una vez. */}
       <motion.span
         aria-hidden="true"
-        className="absolute top-[calc(50%+4rem)] left-0 h-px w-full origin-left bg-[linear-gradient(90deg,transparent,#FFD400_70%,#fff)]"
+        className="absolute top-[calc(50%+4rem)] left-0 h-px w-full origin-left bg-[linear-gradient(90deg,transparent,#E3262E_70%,#fff)]"
         initial={{ scaleX: 0, opacity: 1 }}
         animate={{ scaleX: 1, opacity: 0 }}
         transition={{ scaleX: { duration: 1.1, delay: 0.2, ease }, opacity: { duration: 0.7, delay: 1.1 } }}

@@ -6,7 +6,7 @@ import { WhatsAppButton } from '@/components/whatsapp-button'
 
 export const metadata: Metadata = {
   title: 'Vehículos',
-  description: 'Explorá el catálogo de Bauti Motors: filtrá por marca, precio, año y disponibilidad.',
+  description: 'Explorá el catálogo de Ghanima Motors: filtrá por marca, precio, año y disponibilidad.',
 }
 
 export default function CatalogoPage() {

@@ -30,7 +30,7 @@ export function WhatsAppButton({ message = defaultWhatsappMessage, className, hi
       aria-hidden={hidden || undefined}
       tabIndex={hidden ? -1 : undefined}
       className={cn(
-        'group fixed right-4 bottom-[calc(1rem+env(safe-area-inset-bottom))] z-30 flex h-14 items-center overflow-hidden rounded-full border border-primary/50 bg-[#111111] text-primary shadow-[0_8px_30px_rgb(0_0_0/0.5)] transition-[color,background-color,border-color,opacity,translate] duration-300 hover:border-primary hover:bg-primary hover:text-[#080808] md:right-6 md:bottom-6',
+        'group fixed right-4 bottom-[calc(1rem+env(safe-area-inset-bottom))] z-30 flex h-14 items-center overflow-hidden rounded-full border border-primary/50 bg-[#111111] text-primary shadow-[0_8px_30px_rgb(0_0_0/0.5)] transition-[color,background-color,border-color,opacity,translate] duration-300 hover:border-primary hover:bg-primary hover:text-[#090909] md:right-6 md:bottom-6',
         hidden && 'pointer-events-none translate-y-4 opacity-0',
         className,
       )}

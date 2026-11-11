@@ -31,12 +31,12 @@ const description =
 
 export const metadata: Metadata = {
   title: {
-    default: 'Bauti Motors | Tu próximo auto comienza acá',
-    template: '%s | Bauti Motors',
+    default: 'Ghanima Motors | Tu próximo auto comienza acá',
+    template: '%s | Ghanima Motors',
   },
   description,
-  keywords: ['Bauti Motors', 'concesionaria', 'autos usados', 'BMW', 'Mercedes-Benz', 'Audi', 'Jeep', 'vehículos seleccionados'],
-  authors: [{ name: 'Bauti Motors' }],
+  keywords: ['Ghanima Motors', 'concesionaria', 'autos usados', 'BMW', 'Mercedes-Benz', 'Audi', 'Jeep', 'vehículos seleccionados'],
+  authors: [{ name: 'Ghanima Motors' }],
   icons: {
     icon: [
       { url: '/icon.svg', type: 'image/svg+xml' },
@@ -45,18 +45,18 @@ export const metadata: Metadata = {
     apple: '/apple-icon.png',
   },
   openGraph: {
-    title: 'Bauti Motors | Tu próximo auto comienza acá',
+    title: 'Ghanima Motors | Tu próximo auto comienza acá',
     description,
     type: 'website',
     locale: 'es_AR',
-    siteName: 'Bauti Motors',
+    siteName: 'Ghanima Motors',
     images: ['/images/og.jpg'],
   },
   robots: 'index, follow',
 }
 
 export const viewport: Viewport = {
-  themeColor: '#080808',
+  themeColor: '#090909',
   width: 'device-width',
   initialScale: 1,
   maximumScale: 5,

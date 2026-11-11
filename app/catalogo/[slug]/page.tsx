@@ -28,7 +28,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     title: `${vehicle.name} ${vehicle.year}`,
     description: vehicle.description,
     openGraph: {
-      title: `${vehicle.name} ${vehicle.year} | Bauti Motors`,
+      title: `${vehicle.name} ${vehicle.year} | Ghanima Motors`,
       description: vehicle.description,
     },
   }
@@ -47,7 +47,7 @@ export default async function VehicleDetailPage({ params }: PageProps) {
       <VehicleDetail vehicle={vehicle} />
       <WhatsAppButton
         className="bottom-[calc(5.5rem+env(safe-area-inset-bottom))] lg:bottom-6"
-        message={`Hola, vengo desde la web de Bauti Motors y quiero consultar por el ${vehicle.name} (${vehicle.year}).`}
+        message={`Hola, vengo desde la web de Ghanima Motors y quiero consultar por el ${vehicle.name} (${vehicle.year}).`}
       />
     </main>
   )

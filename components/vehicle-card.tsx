@@ -26,7 +26,7 @@ export function VehicleCard({
   const status = getVehicleStatus(vehicle)
   const lead = size === 'lead'
   const href = `/catalogo/${vehicle.slug}`
-  const whatsappMessage = `Hola, vengo desde la web de Bauti Motors y quiero consultar por el ${vehicle.name} (${vehicle.year}).`
+  const whatsappMessage = `Hola, vengo desde la web de Ghanima Motors y quiero consultar por el ${vehicle.name} (${vehicle.year}).`
 
   const specs = [
     { label: 'Año', value: String(vehicle.year) },
@@ -60,12 +60,12 @@ export function VehicleCard({
 
         <div className="absolute top-3 left-3 flex flex-wrap gap-1.5">
           {vehicle.featured && (
-            <span className="eyebrow rounded-[2px] bg-primary px-2 py-1 !text-[0.625rem] !tracking-[0.12em] font-semibold text-[#080808]">
+            <span className="eyebrow rounded-[2px] bg-primary px-2 py-1 !text-[0.625rem] !tracking-[0.12em] font-semibold text-[#090909]">
               Destacado
             </span>
           )}
           {vehicle.newArrival && (
-            <span className="eyebrow rounded-[2px] bg-[#080808]/85 px-2 py-1 !text-[0.625rem] !tracking-[0.12em] text-primary">
+            <span className="eyebrow rounded-[2px] bg-[#090909]/85 px-2 py-1 !text-[0.625rem] !tracking-[0.12em] text-primary">
               Nuevo ingreso
             </span>
           )}
@@ -73,7 +73,7 @@ export function VehicleCard({
 
         <span
           aria-hidden="true"
-          className="absolute top-3 right-3 flex h-9 w-9 translate-y-1 items-center justify-center bg-white text-[#080808] opacity-0 transition-all duration-500 group-hover:translate-y-0 group-hover:opacity-100"
+          className="absolute top-3 right-3 flex h-9 w-9 translate-y-1 items-center justify-center bg-white text-[#090909] opacity-0 transition-all duration-500 group-hover:translate-y-0 group-hover:opacity-100"
         >
           <ArrowUpRight className="h-4 w-4" />
         </span>

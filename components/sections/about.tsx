@@ -40,7 +40,7 @@ export function About({ showLink = true }: { showLink?: boolean }) {
           </h2>
           <Reveal delay={0.2}>
             <p className="mt-6 text-base leading-relaxed text-[#B8B8B8] md:text-lg">
-              En Bauti Motors entendemos que elegir un vehículo es una decisión importante. Por eso buscamos ofrecer una
+              En Ghanima Motors entendemos que elegir un vehículo es una decisión importante. Por eso buscamos ofrecer una
               experiencia de compra diferente, combinando atención personalizada, calidad y compromiso en cada operación.
             </p>
           </Reveal>

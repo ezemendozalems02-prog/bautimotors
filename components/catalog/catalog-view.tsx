@@ -56,7 +56,7 @@ function Chip({ active, onClick, children }: { active: boolean; onClick: () => v
       className={cn(
         'min-h-10 rounded-[2px] border px-3 text-[0.8125rem] transition-colors duration-300',
         active
-          ? 'border-primary bg-primary font-semibold text-[#080808]'
+          ? 'border-primary bg-primary font-semibold text-[#090909]'
           : 'border-white/12 text-[#B8B8B8] hover:border-white/40 hover:text-white',
       )}
     >
@@ -192,7 +192,7 @@ export function CatalogView() {
   )
 
   return (
-    <section className="bg-[#080808] pb-24">
+    <section className="bg-[#090909] pb-24">
       {/* Barra fija: búsqueda y orden siempre a mano. */}
       <div className="glass-nav sticky top-0 z-20 border-y border-white/8">
         <div className="shell flex items-center gap-2 py-2.5 md:gap-3">
@@ -231,7 +231,7 @@ export function CatalogView() {
                 <SlidersHorizontal className="h-4 w-4 text-primary" />
                 Filtros
                 {activeCount > 0 && (
-                  <span className="tabular flex h-5 min-w-5 items-center justify-center bg-primary px-1 text-xs font-semibold text-[#080808]">
+                  <span className="tabular flex h-5 min-w-5 items-center justify-center bg-primary px-1 text-xs font-semibold text-[#090909]">
                     {activeCount}
                   </span>
                 )}

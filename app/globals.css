@@ -3,12 +3,12 @@
 
 @custom-variant dark (&:is(.dark *));
 
-/* Bauti Motors: el negro manda, el amarillo solo señala. */
+/* Ghanima Motors: el negro manda, el rojo solo señala. */
 :root {
-  --bm-black: #080808;
+  --bm-black: #090909;
   --bm-black-2: #111111;
-  --bm-yellow: #ffd400;
-  --bm-yellow-2: #f5c400;
+  --bm-red: #E3262E;
+  --bm-red-2: #E3262E;
   --bm-white: #ffffff;
   --bm-gray: #b8b8b8;
   --bm-gray-dark: #252525;
@@ -20,33 +20,33 @@
   --card-foreground: var(--bm-white);
   --popover: var(--bm-black-2);
   --popover-foreground: var(--bm-white);
-  --primary: var(--bm-yellow);
+  --primary: var(--bm-red);
   --primary-foreground: var(--bm-black);
   --secondary: #1a1a1a;
   --secondary-foreground: var(--bm-white);
   --muted: var(--bm-gray-dark);
   --muted-foreground: var(--bm-gray);
-  --accent: var(--bm-yellow-2);
+  --accent: var(--bm-red-2);
   --accent-foreground: var(--bm-black);
   --destructive: #e5484d;
   --destructive-foreground: var(--bm-white);
   --border: var(--bm-gray-dark);
   --input: var(--bm-gray-dark);
-  --ring: var(--bm-yellow);
-  --chart-1: var(--bm-yellow);
+  --ring: var(--bm-red);
+  --chart-1: var(--bm-red);
   --chart-2: var(--bm-white);
   --chart-3: var(--bm-gray);
-  --chart-4: var(--bm-yellow-2);
+  --chart-4: var(--bm-red-2);
   --chart-5: var(--bm-gray-dark);
   --radius: 0.25rem;
   --sidebar: var(--bm-black-2);
   --sidebar-foreground: var(--bm-white);
-  --sidebar-primary: var(--bm-yellow);
+  --sidebar-primary: var(--bm-red);
   --sidebar-primary-foreground: var(--bm-black);
   --sidebar-accent: #1a1a1a;
   --sidebar-accent-foreground: var(--bm-white);
   --sidebar-border: var(--bm-gray-dark);
-  --sidebar-ring: var(--bm-yellow);
+  --sidebar-ring: var(--bm-red);
 }
 
 @theme inline {
@@ -109,12 +109,12 @@
   }
 
   ::selection {
-    background: var(--bm-yellow);
+    background: var(--bm-red);
     color: var(--bm-black);
   }
 
   :focus-visible {
-    outline: 2px solid var(--bm-yellow);
+    outline: 2px solid var(--bm-red);
     outline-offset: 3px;
   }
 
@@ -132,7 +132,7 @@
   }
 
   ::-webkit-scrollbar-thumb:hover {
-    background: var(--bm-yellow);
+    background: var(--bm-red);
   }
 }
 
@@ -233,7 +233,7 @@
   }
 
   .btn-primary {
-    background: var(--bm-yellow);
+    background: var(--bm-red);
     color: var(--bm-black);
   }
 
@@ -283,13 +283,13 @@
     opacity: 0.6;
   }
 
-  /* Enlace con flecha y subrayado amarillo. */
+  /* Enlace con flecha y subrayado rojo. */
   .link-line {
     display: inline-flex;
     align-items: center;
     gap: 0.6rem;
     padding-bottom: 0.35rem;
-    background: linear-gradient(var(--bm-yellow), var(--bm-yellow)) left bottom / 100% 1px no-repeat;
+    background: linear-gradient(var(--bm-red), var(--bm-red)) left bottom / 100% 1px no-repeat;
     font-family: var(--font-space-grotesk), system-ui, sans-serif;
     font-size: 0.75rem;
     font-weight: 600;
@@ -305,7 +305,7 @@
   .link-line svg {
     width: 1rem;
     height: 1rem;
-    color: var(--bm-yellow);
+    color: var(--bm-red);
     transition: transform 0.45s var(--bm-ease);
   }
 
@@ -346,13 +346,13 @@
 
   .field input:focus,
   .field textarea:focus {
-    border-color: var(--bm-yellow);
+    border-color: var(--bm-red);
   }
 }
 
 @layer utilities {
   .glass-nav {
-    background: rgb(8 8 8 / 0.72);
+    background: rgb(9 9 9 / 0.72);
     -webkit-backdrop-filter: blur(14px) saturate(140%);
     backdrop-filter: blur(14px) saturate(140%);
   }

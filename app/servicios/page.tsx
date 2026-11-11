@@ -88,7 +88,7 @@ export default function ServiciosPage() {
         Te acompañamos en cada paso, para una experiencia de compra sin preocupaciones.
       </PageHero>
 
-      <section className="bg-[#080808] pb-20 lg:pb-32">
+      <section className="bg-[#090909] pb-20 lg:pb-32">
         <div className="shell">
           {services.map((service, index) => (
             <Reveal key={service.title} y={18}>
@@ -142,12 +142,12 @@ export default function ServiciosPage() {
         </div>
       </section>
 
-      <section className="bg-[#080808] py-20 lg:py-28">
+      <section className="bg-[#090909] py-20 lg:py-28">
         <div className="shell">
           <h2 className="display display-lg max-w-[14em] text-white">Consultá sin compromiso</h2>
           <div className="mt-8 flex flex-col gap-3 sm:flex-row">
             <a
-              href={whatsappUrl('Hola, vengo desde la web de Bauti Motors y quiero consultar por los servicios.')}
+              href={whatsappUrl('Hola, vengo desde la web de Ghanima Motors y quiero consultar por los servicios.')}
               target="_blank"
               rel="noopener noreferrer"
               className="btn btn-primary"

@@ -56,7 +56,7 @@ export function VehicleDetail({ vehicle }: VehicleDetailProps) {
   const imageCount = vehicle.images.length || 1
   const status = getVehicleStatus(vehicle)
   const whatsappHref = whatsappUrl(
-    `Hola, vengo desde la web de Bauti Motors y quiero consultar por el ${vehicle.name} (${vehicle.year}).`,
+    `Hola, vengo desde la web de Ghanima Motors y quiero consultar por el ${vehicle.name} (${vehicle.year}).`,
   )
 
   const related = vehicles
@@ -69,7 +69,7 @@ export function VehicleDetail({ vehicle }: VehicleDetailProps) {
     if (navigator.share) {
       try {
         await navigator.share({
-          title: `${vehicle.name} | Bauti Motors`,
+          title: `${vehicle.name} | Ghanima Motors`,
           text: vehicle.description,
           url: window.location.href,
         })
@@ -89,7 +89,7 @@ export function VehicleDetail({ vehicle }: VehicleDetailProps) {
 
   return (
     <>
-      <section className="bg-[#080808] pt-24 lg:pt-32">
+      <section className="bg-[#090909] pt-24 lg:pt-32">
         <div className="shell">
           <Link
             href="/catalogo"
@@ -125,7 +125,7 @@ export function VehicleDetail({ vehicle }: VehicleDetailProps) {
                     <button
                       type="button"
                       onClick={() => setCurrentImage((currentImage - 1 + imageCount) % imageCount)}
-                      className="absolute top-1/2 left-3 flex h-12 w-12 -translate-y-1/2 items-center justify-center bg-[#080808]/75 text-white transition-colors hover:bg-primary hover:text-[#080808]"
+                      className="absolute top-1/2 left-3 flex h-12 w-12 -translate-y-1/2 items-center justify-center bg-[#090909]/75 text-white transition-colors hover:bg-primary hover:text-[#090909]"
                       aria-label="Imagen anterior"
                     >
                       <ChevronLeft className="h-5 w-5" />
@@ -133,12 +133,12 @@ export function VehicleDetail({ vehicle }: VehicleDetailProps) {
                     <button
                       type="button"
                       onClick={() => setCurrentImage((currentImage + 1) % imageCount)}
-                      className="absolute top-1/2 right-3 flex h-12 w-12 -translate-y-1/2 items-center justify-center bg-[#080808]/75 text-white transition-colors hover:bg-primary hover:text-[#080808]"
+                      className="absolute top-1/2 right-3 flex h-12 w-12 -translate-y-1/2 items-center justify-center bg-[#090909]/75 text-white transition-colors hover:bg-primary hover:text-[#090909]"
                       aria-label="Siguiente imagen"
                     >
                       <ChevronRight className="h-5 w-5" />
                     </button>
-                    <span className="tabular absolute right-3 bottom-3 bg-[#080808]/75 px-2.5 py-1 text-xs text-white">
+                    <span className="tabular absolute right-3 bottom-3 bg-[#090909]/75 px-2.5 py-1 text-xs text-white">
                       {currentImage + 1} / {imageCount}
                     </span>
                   </>
@@ -170,7 +170,7 @@ export function VehicleDetail({ vehicle }: VehicleDetailProps) {
             <aside className="lg:sticky lg:top-24 lg:self-start">
               <div className="flex flex-wrap items-center gap-1.5">
                 {vehicle.featured && (
-                  <span className="eyebrow bg-primary px-2 py-1 !text-[0.625rem] !tracking-[0.12em] font-semibold text-[#080808]">Destacado</span>
+                  <span className="eyebrow bg-primary px-2 py-1 !text-[0.625rem] !tracking-[0.12em] font-semibold text-[#090909]">Destacado</span>
                 )}
                 {vehicle.newArrival && (
                   <span className="eyebrow border border-primary/50 px-2 py-1 !text-[0.625rem] !tracking-[0.12em] text-primary">Nuevo ingreso</span>
@@ -237,7 +237,7 @@ export function VehicleDetail({ vehicle }: VehicleDetailProps) {
         </div>
       </section>
 
-      <section className="bg-[#080808] py-16 lg:py-24">
+      <section className="bg-[#090909] py-16 lg:py-24">
         <div className="shell grid gap-12 lg:grid-cols-12">
           <Reveal className="lg:col-span-5">
             <h2 className="display display-md text-white">Descripción</h2>

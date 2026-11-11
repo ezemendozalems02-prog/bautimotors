@@ -30,10 +30,10 @@ export default function VendeTuAutoPage() {
   return (
     <main className="min-h-screen">
       <PageHero label="Vendé o entregá" lines={['Vendé', 'tu auto']}>
-        En Bauti Motors te asesoramos para vender o entregar tu vehículo de manera simple y rápida.
+        En Ghanima Motors te asesoramos para vender o entregar tu vehículo de manera simple y rápida.
       </PageHero>
 
-      <section className="bg-[#080808] pb-16 lg:pb-24">
+      <section className="bg-[#090909] pb-16 lg:pb-24">
         <div className="shell">
           <ol className="grid border-t border-white/10 md:grid-cols-3 md:divide-x md:divide-white/10">
             {steps.map((step, index) => (
@@ -72,7 +72,7 @@ export default function VendeTuAutoPage() {
               Respuesta en menos de 24hs
             </p>
             <a
-              href={whatsappUrl('Hola, vengo desde la web de Bauti Motors y quiero consultar para vender mi auto.')}
+              href={whatsappUrl('Hola, vengo desde la web de Ghanima Motors y quiero consultar para vender mi auto.')}
               target="_blank"
               rel="noopener noreferrer"
               className="btn btn-ghost mt-5 w-full sm:w-auto"

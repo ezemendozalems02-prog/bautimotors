@@ -3,7 +3,7 @@ import { ArrowRight } from 'lucide-react'
 
 export default function NotFound() {
   return (
-    <main className="tech-grid flex min-h-[80svh] items-center bg-[#080808] pt-24">
+    <main className="tech-grid flex min-h-[80svh] items-center bg-[#090909] pt-24">
       <div className="shell">
         <p className="tabular text-sm text-primary">404</p>
         <h1 className="display display-lg mt-4 max-w-[14em] text-white">Esta ruta no lleva a ningún lado.</h1>

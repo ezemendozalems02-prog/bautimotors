@@ -15,10 +15,10 @@ const contactItems = [
 
 export function ContactClosing() {
   return (
-    <section className="relative isolate overflow-hidden bg-[#080808] pt-20 pb-14 lg:pt-32 lg:pb-20">
+    <section className="relative isolate overflow-hidden bg-[#090909] pt-20 pb-14 lg:pt-32 lg:pb-20">
       <Parallax distance={36} className="absolute inset-x-0 top-0 -z-10 h-[75%]">
         <Image src="/images/contacto-faros.webp" alt="" fill sizes="100vw" className="object-cover object-[80%_85%] md:object-[100%_85%]" />
-        <div className="absolute inset-0 bg-[linear-gradient(to_top,#080808_4%,transparent_40%),linear-gradient(to_bottom,#080808,transparent_35%),linear-gradient(90deg,rgb(8_8_8/0.8),transparent_70%)]" />
+        <div className="absolute inset-0 bg-[linear-gradient(to_top,#090909_4%,transparent_40%),linear-gradient(to_bottom,#090909,transparent_35%),linear-gradient(90deg,rgb(9_9_9/0.8),transparent_70%)]" />
       </Parallax>
 
       <div className="shell">
@@ -46,7 +46,7 @@ export function ContactClosing() {
             <MessageCircle />
             Hablar por WhatsApp
           </a>
-          <Link href="/contacto" className="btn btn-ghost bg-[#080808]/40 sm:!min-h-16 sm:!px-9">
+          <Link href="/contacto" className="btn btn-ghost bg-[#090909]/40 sm:!min-h-16 sm:!px-9">
             Formulario de consulta
             <ArrowRight />
           </Link>

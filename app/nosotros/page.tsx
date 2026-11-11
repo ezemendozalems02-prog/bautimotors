@@ -8,7 +8,7 @@ import { WhatsAppButton } from '@/components/whatsapp-button'
 
 export const metadata: Metadata = {
   title: 'Nosotros',
-  description: 'Conocé Bauti Motors: atención personalizada, calidad y compromiso en cada operación.',
+  description: 'Conocé Ghanima Motors: atención personalizada, calidad y compromiso en cada operación.',
 }
 
 const purpose = [
@@ -43,10 +43,10 @@ const reasons = [
 export default function NosotrosPage() {
   return (
     <main className="min-h-screen">
-      <PageHero label="Quiénes somos" lines={['Bauti', 'Motors']} />
+      <PageHero label="Quiénes somos" lines={['Ghanima', 'Motors']} />
       <About showLink={false} />
 
-      <section className="bg-[#080808] py-20 lg:py-32">
+      <section className="bg-[#090909] py-20 lg:py-32">
         <div className="shell">
           <div className="grid border-y border-white/10 md:grid-cols-2 md:divide-x md:divide-white/10">
             {purpose.map((item, index) => (
@@ -78,7 +78,7 @@ export default function NosotrosPage() {
         </div>
       </section>
 
-      <section className="bg-[#080808] py-20 lg:py-32">
+      <section className="bg-[#090909] py-20 lg:py-32">
         <div className="shell grid gap-10 lg:grid-cols-2">
           <div>
             <h2 className="display display-lg text-white">Una experiencia diferente</h2>

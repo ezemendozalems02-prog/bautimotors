@@ -23,13 +23,13 @@ const linkClass = 'inline-block py-1 text-sm text-[#B8B8B8] transition-colors du
 
 export function Footer() {
   return (
-    <footer className="relative overflow-hidden bg-[#080808]">
-      <div className="h-px bg-[linear-gradient(90deg,transparent,rgb(255_212_0/0.45),transparent)]" />
+    <footer className="relative overflow-hidden bg-[#090909]">
+      <div className="h-px bg-[linear-gradient(90deg,transparent,rgb(227_38_46/0.45),transparent)]" />
 
       <div className="shell pt-16 lg:pt-24">
         <div className="grid gap-12 md:grid-cols-[1.5fr_1fr_1fr_1.3fr]">
           <div className="max-w-xs">
-            <Link href="/" aria-label="Bauti Motors, inicio" className="inline-block text-lg">
+            <Link href="/" aria-label="Ghanima Motors, inicio" className="inline-block text-lg">
               <Logo />
             </Link>
             <p className="mt-6 text-sm leading-relaxed text-[#B8B8B8]">
@@ -105,7 +105,7 @@ export function Footer() {
 
         <div className="mt-14 flex flex-col gap-2 border-t border-white/8 py-6 md:flex-row md:items-center md:justify-between">
           <p className="text-xs text-[#B8B8B8]">
-            © {new Date().getFullYear()} Bauti Motors. Todos los derechos reservados.
+            © {new Date().getFullYear()} Ghanima Motors. Todos los derechos reservados.
           </p>
           <p className="eyebrow text-white/40">{site.location}</p>
         </div>
@@ -117,7 +117,7 @@ export function Footer() {
           className="display text-outline -mb-[0.2em] whitespace-nowrap text-center text-[21vw] leading-none"
           style={{ fontStretch: '125%' }}
         >
-          BAUTI
+          GHANIMA
         </p>
       </div>
     </footer>

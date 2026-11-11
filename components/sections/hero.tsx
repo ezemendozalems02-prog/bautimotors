@@ -33,7 +33,7 @@ export function Hero() {
   ]
 
   return (
-    <section ref={ref} className="grain relative isolate flex min-h-[100svh] flex-col overflow-hidden bg-[#080808]">
+    <section ref={ref} className="grain relative isolate flex min-h-[100svh] flex-col overflow-hidden bg-[#090909]">
       <motion.div style={{ y: imageY }} className="absolute inset-0 -z-10" aria-hidden="true">
         <picture>
           <source media="(min-width: 768px)" srcSet="/images/hero-desktop.webp" />
@@ -44,10 +44,10 @@ export function Hero() {
             className="h-full w-full object-cover object-bottom motion-safe:animate-[hero-breathe_16s_ease-in-out_infinite_alternate] md:object-[70%_50%]"
           />
         </picture>
-        {/* Haz de luz amarilla rasante sobre el piso del estudio. */}
-        <div className="absolute inset-x-0 bottom-0 h-1/2 bg-[radial-gradient(60%_50%_at_72%_100%,rgb(255_212_0/0.11),transparent)]" />
-        <div className="absolute inset-0 bg-[linear-gradient(to_top,#080808_2%,transparent_34%)]" />
-        <div className="absolute inset-0 hidden bg-[linear-gradient(90deg,#080808_18%,rgb(8_8_8/0.5)_46%,transparent_66%)] md:block" />
+        {/* Haz de luz roja rasante sobre el piso del estudio. */}
+        <div className="absolute inset-x-0 bottom-0 h-1/2 bg-[radial-gradient(60%_50%_at_72%_100%,rgb(227_38_46/0.11),transparent)]" />
+        <div className="absolute inset-0 bg-[linear-gradient(to_top,#090909_2%,transparent_34%)]" />
+        <div className="absolute inset-0 hidden bg-[linear-gradient(90deg,#090909_18%,rgb(9_9_9/0.5)_46%,transparent_66%)] md:block" />
       </motion.div>
 
       {/* Líneas técnicas */}
@@ -93,7 +93,7 @@ export function Hero() {
             href={whatsappUrl(defaultWhatsappMessage)}
             target="_blank"
             rel="noopener noreferrer"
-            className="btn btn-ghost bg-[#080808]/40"
+            className="btn btn-ghost bg-[#090909]/40"
           >
             <MessageCircle />
             Contactar asesor
@@ -122,7 +122,7 @@ export function Hero() {
         </dl>
       </motion.div>
 
-      <div className="border-y border-white/8 bg-[#080808]" aria-label={`Marcas en stock: ${brands.join(', ')}`}>
+      <div className="border-y border-white/8 bg-[#090909]" aria-label={`Marcas en stock: ${brands.join(', ')}`}>
         <div aria-hidden="true" className="flex overflow-hidden py-4">
           <div className="marquee flex shrink-0 gap-14 pr-14">
             {[...brands, ...brands, ...brands, ...brands].map((brand, index) => (

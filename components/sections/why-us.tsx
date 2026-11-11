@@ -15,7 +15,7 @@ const features = [
 
 export function WhyUs() {
   return (
-    <section className="bg-[#080808] py-20 lg:py-32">
+    <section className="bg-[#090909] py-20 lg:py-32">
       <div className="shell grid gap-10 lg:grid-cols-12">
         <SectionHeading
           index="03"
